@@ -181,11 +181,11 @@
 
 				// self.imgPreLeft = self.imgPreLeft + self.distX;
 
-				if(self.width==0 || self.element.offsetWidth==self.imgBaseWidth){ //宽度正好是屏幕的宽度时候不容许左右移动
-					self.moveX = 0
-					self.movePos();
-					console.log("touchmove: "+1);
-				}else{
+				// if(self.width==0 || self.element.offsetWidth==self.imgBaseWidth){ //宽度正好是屏幕的宽度时候不容许左右移动
+				// 	self.moveX = 0
+				// 	self.movePos();
+				// 	console.log("touchmove: "+1);
+				// }else{
 					if(self.distX > 0){
 						self.moveX = Math.round(self.distX/self.buff);
 						self.movePos();
@@ -199,7 +199,7 @@
 						self.movePos();
 						console.log("touchmove: "+4);
 					}
-				}
+				// }
 				self.finger = false;
 
 				var n = document.defaultView.getComputedStyle(self.element,null).webkitTransform.slice(7).split(", ")[4];
@@ -329,38 +329,40 @@ self.ratio = self.nowFingerDist / self.startFingerDist;
 			var self = this;
 
 			if(self.height<0){
-				var a = (self.wrapY - self.imgBaseHeight)/2;
-				var b = self.wrapY - self.element.offsetHeight - a;
+				// moveTop移动到顶部需要移动的距离
+				var moveTop = (self.wrapY - self.imgBaseHeight)/2;
+				// var b = self.wrapY - self.element.offsetHeight - a;
 				if(self.distY < 0){
-					if(self.distY <= -a){
-						self.moveY = Math.round((self.distY+a)/self.buff)-a;
+					if(self.distY <= -moveTop){
+						self.moveY = Math.round((self.distY+moveTop)/self.buff)-moveTop;
 					}else{
-						if(self.distY <= b ){
-							// if( Math.abs(self.disY) <= b ){
-							// 	self.moveY = self.distY;
-							// }else{
-							// 	self.moveY = Math.round((self.distY+b)/self.buff) - b;
-							// }
-
-							console.log("b: "+b);
-							console.log("self.distY: "+self.distY);
-							self.moveY = Math.round((self.distY+b)/self.buff) - b;
+						console.log("moveBottom:"+moveBottom);
+						// moveBottom移动到底部的临界点
+						// moveBottomDistY移动到底部需要移动的距离
+						var moveBottom = Math.round(self.wrapY/2 - (self.distY + self.element.offsetHeight - self.imgBaseHeight/2)),
+							moveBottomDistY = Math.round(self.wrapY/2 - self.element.offsetHeight + self.imgBaseHeight/2);
+						if(moveBottom<=0){
+							self.moveY = Math.round((self.distY-moveBottomDistY)/self.buff) + moveBottomDistY;
 						}else{
 							self.moveY = self.distY;
 						}
 					}
 				}else{
+					// self.element.offsetHeight + distY = self.wrapY/2 + self.imgBaseHeight/2;
+					// distY = self.wrapY/2 + self.imgBaseHeight/2 - self.element.offsetHeight
 
-					// console.log("self.distY: "+self.distY);
-					// if(Math.abs(self.distY) >= a){
-					// 	self.moveY = Math.round((self.distY-a)/self.buff)+a;;
-					// }else{
-					// 	self.moveY = self.distY;
-					// }
+					var moveBottomDistY = Math.round(self.wrapY/2 + self.imgBaseHeight/2 - self.element.offsetHeight);
+
+					if(self.distY >= moveBottomDistY){
+						self.moveY = Math.round((self.distY-moveBottomDistY)/self.buff)+moveBottomDistY;
+					}else{
+						self.moveY = self.distY;
+					}
 				}
 
 				console.log("movePos: "+2);
 			}else{
+				console.log("--------------------------------")
 				if(self.outDistY<=0){
 					if(self.distY > 0){
 						self.moveY = Math.round(self.distY/self.buff);
@@ -399,25 +401,35 @@ self.ratio = self.nowFingerDist / self.startFingerDist;
 			var hideTime = ".4s";
 			// -------------
 			if(self.height<0){
-				// self.moveY = self.distY;
-				// console.log(self.moveY);
-				// self.moveY = Math.round(self.distY/self.buff);
-
-				var a = (self.wrapY - self.imgBaseHeight)/2;
+				// moveTop移动到顶部需要移动的距离
+				var moveTop = (self.wrapY - self.imgBaseHeight)/2;
+				// var b = self.wrapY - self.element.offsetHeight - a;
 				if(self.distY < 0){
-					if(Math.abs(self.distY) >= a){
-						self.newY = -a;
+					if(self.distY <= -moveTop){
+						self.newY = -moveTop;
 					}else{
-						self.newY = self.distY;
+						// moveBottom移动到底部的临界点
+						// moveBottomDistY移动到底部需要移动的距离
+						var moveBottom = Math.round(self.wrapY/2 - (self.distY + self.element.offsetHeight - self.imgBaseHeight/2)),
+							moveBottomDistY = Math.round(self.wrapY/2 - self.element.offsetHeight + self.imgBaseHeight/2);
+						if(moveBottom<=0){
+							self.newY = moveBottomDistY;
+						}else{
+							self.newY = self.distY;
+						}
 					}
 				}else{
-					if(Math.abs(self.distY) >= a){
-						self.newY = a;
+					// self.element.offsetHeight + distY = self.wrapY/2 + self.imgBaseHeight/2;
+					// distY = self.wrapY/2 + self.imgBaseHeight/2 - self.element.offsetHeight
+
+					var moveBottomDistY = Math.round(self.wrapY/2 + self.imgBaseHeight/2 - self.element.offsetHeight);
+
+					if(self.distY >= moveBottomDistY){
+						self.newY = moveBottomDistY;
 					}else{
 						self.newY = self.distY;
 					}
 				}
-
 
 				console.log("movePos: "+2);
 				self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
