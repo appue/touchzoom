@@ -156,78 +156,48 @@
 				self.distX = (pageX - self.basePageX) + self.newX;
 				self.distY = (pageY - self.basePageY) + self.newY;
 
-				// self.imgPreLeft = self.imgPreLeft + self.distX;
-
-				// if(self.width==0 || self.element.offsetWidth==self.imgBaseWidth){ //宽度正好是屏幕的宽度时候不容许左右移动
-				// 	self.moveX = 0
-				// 	self.movePos();
-				// 	console.log("touchmove: "+1);
-				// }else{
-					if(self.distX > 0){
-						self.moveX = Math.round(self.distX/self.buff);
-						self.movePos();
-						console.log("touchmove: "+2);
-					}else if( self.distX<=0 && self.distX>=-self.width ){
-						self.moveX = self.distX;
-						self.movePos();
-						console.log("touchmove: "+3);
-					}else if(self.distX < -self.width ){
-						self.moveX = -self.width+Math.round((self.distX+self.width)/self.buff);
-						self.movePos();
-						console.log("touchmove: "+4);
-					}
-				// }
+				if(self.distX > 0){
+					self.moveX = Math.round(self.distX/self.buff);
+					self.movePos();
+					console.log("touchmove: "+2);
+				}else if( self.distX<=0 && self.distX>=-self.width ){
+					self.moveX = self.distX;
+					self.movePos();
+					console.log("touchmove: "+3);
+				}else if(self.distX < -self.width ){
+					self.moveX = -self.width+Math.round((self.distX+self.width)/self.buff);
+					self.movePos();
+					console.log("touchmove: "+4);
+				}
 				self.finger = false;
-
-				var n = document.defaultView.getComputedStyle(self.element,null).webkitTransform.slice(7).split(", ")[4];
-
-				self.imgPreLeft = -parseInt(n);
 			}
 
 			if(touchTarget>=2){
-				e.preventDefault();
-				e.stopPropagation();
-
-				self.nowFingerDist = self.getTouchDist(e).dist;
-				self.nowFingerX    = self.getTouchDist(e).x;
-				self.nowFingerY    = self.getTouchDist(e).y;
-
-				var ratio   = self.nowFingerDist / self.startFingerDist,
-					moveTop = document.body.scrollTop,
-					// imgLeft = Math.round(self.startFingerX * ratio) - self.startFingerX,
-					// imgLeft = Math.round(self.startFingerX * ratio) - self.startFingerX + self.imgPreLeft *ratio,
-					imgLeft = Math.round(self.startFingerX * ratio) - self.startFingerX + self.imgPreLeft *ratio,
-					imgTop  = Math.round((self.startFingerY-moveTop-self.element.offsetTop) * ratio) - (self.startFingerY-moveTop-self.element.offsetTop) + self.imgPreTop * ratio,
-					imgWidth = Math.round(self.mapX * self.nowFingerDist / self.startFingerDist);
-					imgHeight = Math.round(self.mapY * self.nowFingerDist / self.startFingerDist);
-
-
-				if(imgWidth >= self.imgBaseWidth){
-					self.element.style.width = imgWidth + "px";
-					self.refresh(-imgLeft, -imgTop, "0s", "ease");
-					
-					self.a = Math.round(imgLeft);
-					self.b = Math.round(imgTop);
-
-					// self.distX = -imgLeft;
-					self.newX = -Math.round(imgLeft);
-					self.newY = -Math.round(imgTop);
-					// self.distY = -imgTop;
-					// self.newY  = -imgTop;
-					self.finger = true;
-				}else{
-					if(imgWidth < self.imgBaseWidth){
-						self.element.style.width = self.imgBaseWidth + "px";
-					}
-				}
-				self.finger = true;
+				// e.preventDefault();
+				// e.stopPropagation();
+				// var nowFingerDist = self.getTouchDist(e).dist, //获得当前长度
+				// 	ratio = nowFingerDist / self.startFingerDist, //计算缩放比
+				// 	imgWidth  = Math.round(self.mapX * ratio), //计算图片宽度
+				// 	imgHeight = Math.round(self.mapY * ratio); //计算图片高度
+				// // 计算图片新的坐标
+				// self.imgNewX   = Math.round(self.startFingerX * ratio) - self.startFingerX + Math.round((-self.newX) * ratio);
+				// self.imgNewY   = (Math.round(self.startFingerY * ratio) - self.startFingerY)/2 + Math.round((-self.newY) * ratio);
+				// // 开始图片缩放
+				// if(imgWidth >= self.imgBaseWidth){
+				// 	self.element.style.width = imgWidth + "px";
+				// 	self.refresh(-self.imgNewX, -self.imgNewY, "0s", "ease");
+				// 	self.finger = true;
+				// }else{
+				// 	if(imgWidth < self.imgBaseWidth){
+				// 		self.element.style.width = self.imgBaseWidth + "px";
+				// 	}
+				// }
+				// self.finger = true;
+				self._zoom(e);
 			}
 		},
 		_touchend: function(e){
 			var self = this;
-			
-			self.imgPreLeft = self.a;
-			self.imgPreTop = self.b
 
 			self._changeData(); //重新计算数据
 
@@ -246,9 +216,37 @@
 					self.reset();
 					console.log("touchend:"+3);
 				}
+			}else{
+				self.newX = -self.imgNewX;
+				self.newY = -self.imgNewY;
 			}
 		},
-		movePos: function(){ //移动
+		// 图片缩放
+		_zoom: function(e){
+			var self = this;
+			e.preventDefault();
+			e.stopPropagation();
+			var nowFingerDist = self.getTouchDist(e).dist, //获得当前长度
+				ratio = nowFingerDist / self.startFingerDist, //计算缩放比
+				imgWidth  = Math.round(self.mapX * ratio), //计算图片宽度
+				imgHeight = Math.round(self.mapY * ratio); //计算图片高度
+			// 计算图片新的坐标
+			self.imgNewX   = Math.round(self.startFingerX * ratio) - self.startFingerX + Math.round((-self.newX) * ratio);
+			self.imgNewY   = (Math.round(self.startFingerY * ratio) - self.startFingerY)/2 + Math.round((-self.newY) * ratio);
+			// 开始图片缩放
+			if(imgWidth >= self.imgBaseWidth){
+				self.element.style.width = imgWidth + "px";
+				self.refresh(-self.imgNewX, -self.imgNewY, "0s", "ease");
+				self.finger = true;
+			}else{
+				if(imgWidth < self.imgBaseWidth){
+					self.element.style.width = self.imgBaseWidth + "px";
+				}
+			}
+			self.finger = true;
+		},
+		// 移动坐标
+		movePos: function(){
 			var self = this;
 
 			if(self.height<0){
@@ -259,7 +257,6 @@
 					if(self.distY <= -moveTop){
 						self.moveY = Math.round((self.distY+moveTop)/self.buff)-moveTop;
 					}else{
-						console.log("moveBottom:"+moveBottom);
 						// moveBottom移动到底部的临界点
 						// moveBottomDistY移动到底部需要移动的距离
 						var moveBottom = Math.round(self.wrapY/2 - (self.distY + self.mapY - self.imgBaseHeight/2)),
@@ -278,7 +275,6 @@
 						self.moveY = self.distY;
 					}
 				}
-				console.log("movePos: "+2);
 			}else{
 				if(self.outDistY<=0){
 					if(self.distY > 0){
@@ -311,11 +307,11 @@
 			// self.element.style.webkitTransform = getTranslate(self.moveX, self.moveY);
 			self.refresh(self.moveX, self.moveY, "0s", "ease");
 		},
+		// 重置数据
 		reset: function(){
-			var self = this;
-
-			var hideTime = ".4s";
-			// -------------
+			var self = this,
+				hideTime = ".4s";
+			
 			if(self.height<0){
 				// moveTop移动到顶部需要移动的距离
 				var moveTop = (self.wrapY - self.imgBaseHeight)/2;
@@ -343,8 +339,6 @@
 						self.newY = self.distY;
 					}
 				}
-
-				console.log("movePos: "+2);
 				self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
 			}else{
 				if(self.outDistY<=0){
@@ -385,6 +379,7 @@
 				}
 			}
 		},
+		// 执行图片移动
 		refresh: function(x, y, timer, type){
 			var self = this;
 			self.element.style.webkitTransitionProperty = "-webkit-transform";
@@ -395,6 +390,7 @@
 		    // }, false );
 		    self.element.style.webkitTransform = getTranslate(x, y);
 		},
+		// 获取多点触控
 		getTouchDist: function(e){
 			var x1 = y1 = x2 = y2 = x3 = y3 = 0,
 				result = {};
