@@ -57,8 +57,6 @@
 					// 禁止页面滚动
 					document.addEventListener("touchmove", self.eventStop, false);
 					
-
-
 					self.imgBaseWidth  = zoomImg.offsetWidth;
 					self.imgBaseHeight = zoomImg.offsetHeight;
 
@@ -127,37 +125,18 @@
 
 			self._changeData(); //重新初始化图片、可视区域数据，由于放大会产生新的计算
 
-			// 获得图片的宽度和高度
-	        self.startImgWidth  = self.element.offsetWidth;
-	        self.startImgHeight = self.element.offsetHeight;
-
-
-	        // console.log(self.startImgWidth);
-
 			if(touchTarget == 1){
-				// self.startPageX = getPage(e, "pageX");
-				// self.basePageX  = self.startPageX;
-				
-				// self.startPageY = getPage(e, "pageY");
-				// self.basePageY  = self.startPageY;
-
 				// 获取开始坐标
 				self.basePageX = getPage(e, "pageX");
 				self.basePageY = getPage(e, "pageY");
 
-
-				// console.log("touchstart: "+ self.basePageX +"___"+ self.basePageY);
-
 				self.finger = false;
-				// console.log(self.element.offsetHeight);
 			}else{
 				self.finger = true;
 
 		        self.startFingerDist = self.getTouchDist(e).dist;
 		        self.startFingerX    = self.getTouchDist(e).x;
 		        self.startFingerY    = self.getTouchDist(e).y;
-
-				// console.log("self.startFingerX: "+ self.startFingerX);
 			}
 		},
 		_touchmove: function(e){
@@ -172,8 +151,6 @@
 				// 禁止默认事件
 				e.preventDefault();
 				e.stopPropagation();
-
-				//console.log("touchmove: "+ pageX +"___"+ pageY);
 
 				// 获得移动距离
 				self.distX = (pageX - self.basePageX) + self.newX;
@@ -203,82 +180,31 @@
 				self.finger = false;
 
 				var n = document.defaultView.getComputedStyle(self.element,null).webkitTransform.slice(7).split(", ")[4];
-				// console.log("n: "+parseInt(n));
+
 				self.imgPreLeft = -parseInt(n);
-
-				// if(self.imgPreLeft < 0) self.imgPreLeft = 0;
-				// console.log("self.moveX: "+self.moveX);
-				// console.log("self.imgPreLeft: "+self.imgPreLeft);
-
-				// console.log("1: "+self.imgPreLeft);
 			}
 
 			if(touchTarget>=2){
 				e.preventDefault();
 				e.stopPropagation();
 
-				// console.log("2: "+self.imgPreLeft);
-
 				self.nowFingerDist = self.getTouchDist(e).dist;
 				self.nowFingerX    = self.getTouchDist(e).x;
 				self.nowFingerY    = self.getTouchDist(e).y;
 
-				// console.log(self.element.getAttribute("style"));
+				var ratio   = self.nowFingerDist / self.startFingerDist,
+					moveTop = document.body.scrollTop,
+					// imgLeft = Math.round(self.startFingerX * ratio) - self.startFingerX,
+					// imgLeft = Math.round(self.startFingerX * ratio) - self.startFingerX + self.imgPreLeft *ratio,
+					imgLeft = Math.round(self.startFingerX * ratio) - self.startFingerX + self.imgPreLeft *ratio,
+					imgTop  = Math.round((self.startFingerY-moveTop-self.element.offsetTop) * ratio) - (self.startFingerY-moveTop-self.element.offsetTop) + self.imgPreTop * ratio,
+					imgWidth = Math.round(self.mapX * self.nowFingerDist / self.startFingerDist);
+					imgHeight = Math.round(self.mapY * self.nowFingerDist / self.startFingerDist);
 
-
-				// self.imgPreLeft = self.imgPreLeft + self.distX;
-				// var a = document.defaultView.getComputedStyle(self.element,null);
-				// var style = self.element.getAttribute("style");
-				// var b = style.split(";");
-				// console.log(document.defaultView.getComputedStyle(self.element,null).webkitTransform.slice(7).split(", ")[4]);
-				// console.log(b);
-
-				// var k = 0;
-				// var n = document.defaultView.getComputedStyle(self.element,null).webkitTransform.slice(7).split(", ")[4];
-				// console.log("n: "+parseInt(n));
-				// if(self.distX!=0){
-				// 	k = self.imgPreLeft + parseInt(n);
-				// }
-				// console.log(k);
-
-				// if(self.element.offsetHeight < self.wrapY){
-				// 	var ratio   = self.nowFingerDist / self.startFingerDist,
-				// 		moveTop = document.body.scrollTop,
-				// 		imgLeft = Math.round(self.startFingerX * ratio) - self.startFingerX + self.imgPreLeft *ratio,
-				// 		imgTop  = (self.startImgHeight * ratio - self.startImgHeight)/2,
-				// 		imgWidth = Math.round(self.startImgWidth * self.nowFingerDist / self.startFingerDist);
-				// 		imgHeight = Math.round(self.startImgHeight * self.nowFingerDist / self.startFingerDist);
-				// }else{
-self.ratio = self.nowFingerDist / self.startFingerDist;
-					var ratio   = self.nowFingerDist / self.startFingerDist,
-						moveTop = document.body.scrollTop,
-						// imgLeft = Math.round(self.startFingerX * ratio) - self.startFingerX,
-						// imgLeft = Math.round(self.startFingerX * ratio) - self.startFingerX + self.imgPreLeft *ratio,
-						imgLeft = Math.round(self.startFingerX * ratio) - self.startFingerX + self.imgPreLeft *ratio,
-						imgTop  = Math.round((self.startFingerY-moveTop-self.element.offsetTop) * ratio) - (self.startFingerY-moveTop-self.element.offsetTop) + self.imgPreTop * ratio,
-						imgWidth = Math.round(self.startImgWidth * self.nowFingerDist / self.startFingerDist);
-						imgHeight = Math.round(self.startImgHeight * self.nowFingerDist / self.startFingerDist);
-
-				// }
-
-				// console.log("imgLeft:"+imgLeft+" imgNewLeft:"+(imgLeft+self.imgPreLeft));
-				// if(self.distX){
-				// 	imgLeft = -imgLeft-self.distX;
-				// }
 
 				if(imgWidth >= self.imgBaseWidth){
 					self.element.style.width = imgWidth + "px";
-					// self.element.style.height = imgHeight + "px";
-					// self.element.style.marginTop = -self.element.height/2+"px";
-
-					// var mt = (imgHeight-self.imgBaseHeight)/2
-
-					// self.element.style.webkitTransform = getTranslate(-imgLeft, 0);
-
-					// console.log(self.element.getAttribute("style"));
-
 					self.refresh(-imgLeft, -imgTop, "0s", "ease");
-
 					
 					self.a = Math.round(imgLeft);
 					self.b = Math.round(imgTop);
@@ -288,11 +214,8 @@ self.ratio = self.nowFingerDist / self.startFingerDist;
 					self.newY = -Math.round(imgTop);
 					// self.distY = -imgTop;
 					// self.newY  = -imgTop;
-
-					// console.log("self.newX.finger:"+self.newX);
 					self.finger = true;
 				}else{
-					// self.isScale = true;
 					if(imgWidth < self.imgBaseWidth){
 						self.element.style.width = self.imgBaseWidth + "px";
 					}
@@ -339,8 +262,8 @@ self.ratio = self.nowFingerDist / self.startFingerDist;
 						console.log("moveBottom:"+moveBottom);
 						// moveBottom移动到底部的临界点
 						// moveBottomDistY移动到底部需要移动的距离
-						var moveBottom = Math.round(self.wrapY/2 - (self.distY + self.element.offsetHeight - self.imgBaseHeight/2)),
-							moveBottomDistY = Math.round(self.wrapY/2 - self.element.offsetHeight + self.imgBaseHeight/2);
+						var moveBottom = Math.round(self.wrapY/2 - (self.distY + self.mapY - self.imgBaseHeight/2)),
+							moveBottomDistY = Math.round(self.wrapY/2 - self.mapY + self.imgBaseHeight/2);
 						if(moveBottom<=0){
 							self.moveY = Math.round((self.distY-moveBottomDistY)/self.buff) + moveBottomDistY;
 						}else{
@@ -348,21 +271,15 @@ self.ratio = self.nowFingerDist / self.startFingerDist;
 						}
 					}
 				}else{
-					// self.element.offsetHeight + distY = self.wrapY/2 + self.imgBaseHeight/2;
-					// distY = self.wrapY/2 + self.imgBaseHeight/2 - self.element.offsetHeight
-
-					var moveBottomDistY = Math.round(self.wrapY/2 + self.imgBaseHeight/2 - self.element.offsetHeight);
-
+					var moveBottomDistY = Math.round(self.wrapY/2 + self.imgBaseHeight/2 - self.mapY);
 					if(self.distY >= moveBottomDistY){
 						self.moveY = Math.round((self.distY-moveBottomDistY)/self.buff)+moveBottomDistY;
 					}else{
 						self.moveY = self.distY;
 					}
 				}
-
 				console.log("movePos: "+2);
 			}else{
-				console.log("--------------------------------")
 				if(self.outDistY<=0){
 					if(self.distY > 0){
 						self.moveY = Math.round(self.distY/self.buff);
@@ -391,7 +308,6 @@ self.ratio = self.nowFingerDist / self.startFingerDist;
 				}
 			}
 
-
 			// self.element.style.webkitTransform = getTranslate(self.moveX, self.moveY);
 			self.refresh(self.moveX, self.moveY, "0s", "ease");
 		},
@@ -410,8 +326,8 @@ self.ratio = self.nowFingerDist / self.startFingerDist;
 					}else{
 						// moveBottom移动到底部的临界点
 						// moveBottomDistY移动到底部需要移动的距离
-						var moveBottom = Math.round(self.wrapY/2 - (self.distY + self.element.offsetHeight - self.imgBaseHeight/2)),
-							moveBottomDistY = Math.round(self.wrapY/2 - self.element.offsetHeight + self.imgBaseHeight/2);
+						var moveBottom = Math.round(self.wrapY/2 - (self.distY + self.mapY - self.imgBaseHeight/2)),
+							moveBottomDistY = Math.round(self.wrapY/2 - self.mapY + self.imgBaseHeight/2);
 						if(moveBottom<=0){
 							self.newY = moveBottomDistY;
 						}else{
@@ -419,10 +335,7 @@ self.ratio = self.nowFingerDist / self.startFingerDist;
 						}
 					}
 				}else{
-					// self.element.offsetHeight + distY = self.wrapY/2 + self.imgBaseHeight/2;
-					// distY = self.wrapY/2 + self.imgBaseHeight/2 - self.element.offsetHeight
-
-					var moveBottomDistY = Math.round(self.wrapY/2 + self.imgBaseHeight/2 - self.element.offsetHeight);
+					var moveBottomDistY = Math.round(self.wrapY/2 + self.imgBaseHeight/2 - self.mapY);
 
 					if(self.distY >= moveBottomDistY){
 						self.newY = moveBottomDistY;
