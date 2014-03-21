@@ -37,9 +37,16 @@
 				zoomImg   = document.querySelector(".imgzoom_pack .imgzoom_img img"),
 				zoomClose = document.querySelector(".imgzoom_pack .imgzoom_x"),
 				imgSrc    = "";
+			
+			// 配置数据
+			self.buff   = 3; //缓冲系数
+			self.finger = false; //触摸手指的状态 false：单手指 true：多手指
+			self.distX  = 0;
+			self.distY  = 0;
+			self.newX   = 0;
+			self.newY   = 0;
 
 			zoomClose.addEventListener("click", function(){
-
 				zoomMask.style.cssText = "display:none";
 				zoomImg.src = "";
 				zoomImg.style.cssText = "";
@@ -75,20 +82,6 @@
 
 			self.element = document.querySelector(".imgzoom_pack img");
 
-			self.buff   = 3; //缓冲系数
-			self.finger = false; //触摸手指的状态 false：单手指 true：多手指
-
-
-			self.distX = 0;
-			self.distY = 0;
-			self.newX  = 0;
-			self.newY  = 0;
-
-			self.y = 0;
-			self.imgPreLeft = 0;
-			self.imgPreTop  = 0;
-			self.a = 0;
-
 			//config set
 			self.wrapX = params.wrapX || 0; 	//可视区域宽度
 			self.wrapY = params.wrapY || 0; 	//可视区域高度
@@ -97,8 +90,8 @@
 
 			self.outDistY = (self.mapY - self.wrapY)/2; //图片超过一瓶的时候有用
 			
-			self.width  = self.mapX - self.wrapX;   //地图的宽度减去可视区域的宽度
-			self.height = self.mapY - self.wrapY;   //地图的高度减去可视区域的高度
+			self.diffX  = self.mapX - self.wrapX;   //地图的宽度减去可视区域的宽度
+			self.diffY = self.mapY - self.wrapY;   //地图的高度减去可视区域的高度
 
 			self.element.addEventListener("touchstart",function(e){
 				self._touchstart(e);
@@ -160,12 +153,12 @@
 					self.moveX = Math.round(self.distX/self.buff);
 					self.movePos();
 					console.log("touchmove: "+2);
-				}else if( self.distX<=0 && self.distX>=-self.width ){
+				}else if( self.distX<=0 && self.distX>=-self.diffX ){
 					self.moveX = self.distX;
 					self.movePos();
 					console.log("touchmove: "+3);
-				}else if(self.distX < -self.width ){
-					self.moveX = -self.width+Math.round((self.distX+self.width)/self.buff);
+				}else if(self.distX < -self.diffX ){
+					self.moveX = -self.diffX+Math.round((self.distX+self.diffX)/self.buff);
 					self.movePos();
 					console.log("touchmove: "+4);
 				}
@@ -206,13 +199,13 @@
 					self.newX = 0;
 					self.reset();
 					console.log("touchend:"+1);
-				}else if( self.distX<=0 && self.distX>=-self.width ){
+				}else if( self.distX<=0 && self.distX>=-self.diffX ){
 					self.newX = self.distX;
 					self.newY = self.distY;
 					self.reset();
 					console.log("touchend:"+2);
-				}else if( self.distX<-self.width ){
-					self.newX = -self.width;
+				}else if( self.distX<-self.diffX ){
+					self.newX = -self.diffX;
 					self.reset();
 					console.log("touchend:"+3);
 				}
@@ -249,7 +242,7 @@
 		movePos: function(){
 			var self = this;
 
-			if(self.height<0){
+			if(self.diffY<0){
 				// moveTop移动到顶部需要移动的距离
 				var moveTop = (self.wrapY - self.imgBaseHeight)/2;
 				// var b = self.wrapY - self.element.offsetHeight - a;
@@ -280,8 +273,8 @@
 					if(self.distY > 0){
 						self.moveY = Math.round(self.distY/self.buff);
 						console.log("movePos: "+3);
-					}else if(self.distY < -self.height){
-						self.moveY = -self.height+Math.round((self.distY+self.height)/self.buff);
+					}else if(self.distY < -self.diffY){
+						self.moveY = -self.diffY+Math.round((self.distY+self.diffY)/self.buff);
 						console.log("movePos: "+4);
 					}else{
 						self.moveY = self.distY;
@@ -312,7 +305,7 @@
 			var self = this,
 				hideTime = ".4s";
 			
-			if(self.height<0){
+			if(self.diffY<0){
 				// moveTop移动到顶部需要移动的距离
 				var moveTop = (self.wrapY - self.imgBaseHeight)/2;
 				// var b = self.wrapY - self.element.offsetHeight - a;
@@ -346,13 +339,13 @@
 						self.newY = 0;
 						self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
 						console.log("reset: "+3);
-					}else if( self.distY<0 && self.distY>=-self.height ){
+					}else if( self.distY<0 && self.distY>=-self.diffY ){
 						self.newY = self.distY;
 						// self.refresh(self.newX, self.distY, "0s", "ease");
 						self.refresh(self.newX, self.distY, hideTime, "ease-in-out");
 						console.log("reset: "+4);
-					}else if( self.distY<-self.height ){
-						self.newY = -self.height;
+					}else if( self.distY<-self.diffY ){
+						self.newY = -self.diffY;
 						self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
 						console.log("reset: "+5);
 					}
