@@ -37,16 +37,9 @@
 				zoomImg   = document.querySelector(".imgzoom_pack .imgzoom_img img"),
 				zoomClose = document.querySelector(".imgzoom_pack .imgzoom_x"),
 				imgSrc    = "";
-			
-			// 配置数据
-			self.buff   = 3; //缓冲系数
-			self.finger = false; //触摸手指的状态 false：单手指 true：多手指
-			self.distX  = 0;
-			self.distY  = 0;
-			self.newX   = 0;
-			self.newY   = 0;
 
 			zoomClose.addEventListener("click", function(){
+
 				zoomMask.style.cssText = "display:none";
 				zoomImg.src = "";
 				zoomImg.style.cssText = "";
@@ -82,6 +75,21 @@
 
 			self.element = document.querySelector(".imgzoom_pack img");
 
+			self.buff   = 3; //缓冲系数
+			self.finger = false; //触摸手指的状态 false：单手指 true：多手指
+
+
+			self.distX = 0;
+			self.distY = 0;
+			self.newX  = 0;
+			self.newY  = 0;
+
+			self.y = 0;
+			self.imgPreLeft = 0;
+			self.imgPreTop  = 0;
+			self.a = 0;
+
+
 			//config set
 			self.wrapX = params.wrapX || 0; 	//可视区域宽度
 			self.wrapY = params.wrapY || 0; 	//可视区域高度
@@ -90,8 +98,8 @@
 
 			self.outDistY = (self.mapY - self.wrapY)/2; //图片超过一瓶的时候有用
 			
-			self.diffX  = self.mapX - self.wrapX;   //地图的宽度减去可视区域的宽度
-			self.diffY = self.mapY - self.wrapY;   //地图的高度减去可视区域的高度
+			self.width  = self.mapX - self.wrapX;   //地图的宽度减去可视区域的宽度
+			self.height = self.mapY - self.wrapY;   //地图的高度减去可视区域的高度
 
 			self.element.addEventListener("touchstart",function(e){
 				self._touchstart(e);
@@ -106,7 +114,7 @@
 		_changeData: function(){
 			this.mapX     = this.element.offsetWidth; 	  //地图宽度
 			this.mapY     = this.element.offsetHeight;      //地图高度
-			this.outDistY = (this.mapY - this.wrapY)/2; //当图片高度超过屏幕的高度时候。图片是垂直居中的，这时移动有个高度做为缓冲带
+			// this.outDistY = (this.mapY - this.wrapY)/2; //当图片高度超过屏幕的高度时候。图片是垂直居中的，这时移动有个高度做为缓冲带
 			this.width    = this.mapX - this.wrapX;   //地图的宽度减去可视区域的宽度
 			this.height   = this.mapY - this.wrapY;   //地图的高度减去可视区域的高度
 		},
@@ -153,12 +161,12 @@
 					self.moveX = Math.round(self.distX/self.buff);
 					self.movePos();
 					console.log("touchmove: "+2);
-				}else if( self.distX<=0 && self.distX>=-self.diffX ){
+				}else if( self.distX<=0 && self.distX>=-self.width ){
 					self.moveX = self.distX;
 					self.movePos();
 					console.log("touchmove: "+3);
-				}else if(self.distX < -self.diffX ){
-					self.moveX = -self.diffX+Math.round((self.distX+self.diffX)/self.buff);
+				}else if(self.distX < -self.width ){
+					self.moveX = -self.width+Math.round((self.distX+self.width)/self.buff);
 					self.movePos();
 					console.log("touchmove: "+4);
 				}
@@ -199,13 +207,13 @@
 					self.newX = 0;
 					self.reset();
 					console.log("touchend:"+1);
-				}else if( self.distX<=0 && self.distX>=-self.diffX ){
+				}else if( self.distX<=0 && self.distX>=-self.width ){
 					self.newX = self.distX;
 					self.newY = self.distY;
 					self.reset();
 					console.log("touchend:"+2);
-				}else if( self.distX<-self.diffX ){
-					self.newX = -self.diffX;
+				}else if( self.distX<-self.width ){
+					self.newX = -self.width;
 					self.reset();
 					console.log("touchend:"+3);
 				}
@@ -219,6 +227,8 @@
 			var self = this;
 			e.preventDefault();
 			e.stopPropagation();
+
+
 			var nowFingerDist = self.getTouchDist(e).dist, //获得当前长度
 				ratio = nowFingerDist / self.startFingerDist, //计算缩放比
 				imgWidth  = Math.round(self.mapX * ratio), //计算图片宽度
@@ -236,13 +246,14 @@
 					self.element.style.width = self.imgBaseWidth + "px";
 				}
 			}
+
 			self.finger = true;
 		},
 		// 移动坐标
 		movePos: function(){
 			var self = this;
 
-			if(self.diffY<0){
+			if(self.height<0){
 				// moveTop移动到顶部需要移动的距离
 				var moveTop = (self.wrapY - self.imgBaseHeight)/2;
 				// var b = self.wrapY - self.element.offsetHeight - a;
@@ -269,31 +280,59 @@
 					}
 				}
 			}else{
-				if(self.outDistY<=0){
-					if(self.distY > 0){
-						self.moveY = Math.round(self.distY/self.buff);
-						console.log("movePos: "+3);
-					}else if(self.distY < -self.diffY){
-						self.moveY = -self.diffY+Math.round((self.distY+self.diffY)/self.buff);
-						console.log("movePos: "+4);
+				// if(self.outDistY<=0){
+				// 	if(self.distY > 0){
+				// 		self.moveY = Math.round(self.distY/self.buff);
+				// 		console.log("movePos: "+3);
+				// 	}else if(self.distY < -self.height){
+				// 		self.moveY = -self.height+Math.round((self.distY+self.height)/self.buff);
+				// 		console.log("movePos: "+4);
+				// 	}else{
+				// 		self.moveY = self.distY;
+				// 		console.log("movePos: "+5);
+				// 	}
+				// }else{
+				// 	if(self.distY>0 && self.distY<=self.outDistY){
+				// 		self.moveY = self.distY;
+				// 		console.log("movePos: "+6);
+				// 	}else if(self.distY > self.outDistY){
+				// 		self.moveY = Math.round((self.distY-self.outDistY)/self.buff)+self.outDistY;
+				// 		console.log("movePos: "+7);
+				// 	}else if(self.distY < -self.outDistY){
+				// 		self.moveY = -self.outDistY+Math.round((self.distY+self.outDistY)/self.buff);
+				// 		console.log("movePos: "+8);
+				// 	}else{
+				// 		self.moveY = self.distY;
+				// 		console.log("movePos: "+9);
+				// 	}
+				// }
+
+				if(self.outDistY > 0){
+					if(self.element.offsetHeight == self.imgBaseHeight){
+						if(self.distY <= -Math.round(self.outDistY)){
+							self.moveY = Math.round((self.distY+self.outDistY)/self.buff) - self.outDistY;
+						}else if(self.distY >= Math.round(self.outDistY)){
+							self.moveY = Math.round((self.distY-self.outDistY)/self.buff) + self.outDistY;
+						}else{
+							self.moveY = self.distY;
+						}
 					}else{
 						self.moveY = self.distY;
-						console.log("movePos: "+5);
 					}
 				}else{
-					if(self.distY>0 && self.distY<=self.outDistY){
-						self.moveY = self.distY;
-						console.log("movePos: "+6);
-					}else if(self.distY > self.outDistY){
-						self.moveY = Math.round((self.distY-self.outDistY)/self.buff)+self.outDistY;
-						console.log("movePos: "+7);
-					}else if(self.distY < -self.outDistY){
-						self.moveY = -self.outDistY+Math.round((self.distY+self.outDistY)/self.buff);
-						console.log("movePos: "+8);
-					}else{
-						self.moveY = self.distY;
-						console.log("movePos: "+9);
-					}
+					// var moveTop = (self.wrapY - self.imgBaseHeight)/2;
+					// var a = moveTop +  (self.element.offsetHeight - self.wrapY)/2; //下面不能移了
+
+					// if(self.distY < 0){
+					// 	// if(self.distY <= -a){
+					// 	// 	self.moveY = Math.round((self.distY + a)/self.buff) - a;
+					// 	// }else{
+					// 	// 	self.moveY = self.distY;
+					// 	// }
+						
+					// }
+
+					self.moveY = self.distY;
 				}
 			}
 
@@ -305,7 +344,7 @@
 			var self = this,
 				hideTime = ".4s";
 			
-			if(self.diffY<0){
+			if(self.height<0){
 				// moveTop移动到顶部需要移动的距离
 				var moveTop = (self.wrapY - self.imgBaseHeight)/2;
 				// var b = self.wrapY - self.element.offsetHeight - a;
@@ -334,42 +373,64 @@
 				}
 				self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
 			}else{
-				if(self.outDistY<=0){
-					if( self.distY>0 ){
-						self.newY = 0;
-						self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
-						console.log("reset: "+3);
-					}else if( self.distY<0 && self.distY>=-self.diffY ){
+				// if(self.outDistY<=0){
+				// 	if( self.distY>0 ){
+				// 		self.newY = 0;
+				// 		self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+3);
+				// 	}else if( self.distY<0 && self.distY>=-self.height ){
+				// 		self.newY = self.distY;
+				// 		// self.refresh(self.newX, self.distY, "0s", "ease");
+				// 		self.refresh(self.newX, self.distY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+4);
+				// 	}else if( self.distY<-self.height ){
+				// 		self.newY = -self.height;
+				// 		self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+5);
+				// 	}
+				// }else{
+				// 	if( self.distY>0 && self.distY<self.outDistY ){
+				// 		self.newY = self.distY;
+				// 		// self.refresh(self.newX, self.distY, "0s", "ease");
+				// 		self.refresh(self.newX, self.distY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+6);
+				// 	}else if( self.distY>=self.outDistY ){
+				// 		self.newY = self.outDistY;
+				// 		self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+7);
+				// 	}else if( self.distY<0 && self.distY>=-self.outDistY ){
+				// 		self.newY = self.distY;
+				// 		// self.refresh(self.newX, self.distY, "0s", "ease");
+				// 		self.refresh(self.newX, self.distY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+8);
+				// 	}else if( self.distY<-self.outDistY ){
+				// 		self.newY = -self.outDistY;
+				// 		self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+9);
+				// 	}
+				// }
+
+
+				if(self.outDistY > 0){
+					if(self.element.offsetHeight == self.imgBaseHeight){
+						if(self.distY <= -Math.round(self.outDistY)){
+							self.newY = -self.outDistY;
+						}else if(self.distY >= Math.round(self.outDistY)){
+							self.newY = self.outDistY;
+						}else{
+							self.newY = self.distY;
+						}
+					}else{
 						self.newY = self.distY;
-						// self.refresh(self.newX, self.distY, "0s", "ease");
-						self.refresh(self.newX, self.distY, hideTime, "ease-in-out");
-						console.log("reset: "+4);
-					}else if( self.distY<-self.diffY ){
-						self.newY = -self.diffY;
-						self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
-						console.log("reset: "+5);
 					}
 				}else{
-					if( self.distY>0 && self.distY<self.outDistY ){
-						self.newY = self.distY;
-						// self.refresh(self.newX, self.distY, "0s", "ease");
-						self.refresh(self.newX, self.distY, hideTime, "ease-in-out");
-						console.log("reset: "+6);
-					}else if( self.distY>=self.outDistY ){
-						self.newY = self.outDistY;
-						self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
-						console.log("reset: "+7);
-					}else if( self.distY<0 && self.distY>=-self.outDistY ){
-						self.newY = self.distY;
-						// self.refresh(self.newX, self.distY, "0s", "ease");
-						self.refresh(self.newX, self.distY, hideTime, "ease-in-out");
-						console.log("reset: "+8);
-					}else if( self.distY<-self.outDistY ){
-						self.newY = -self.outDistY;
-						self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
-						console.log("reset: "+9);
-					}
+					// var moveTop = (self.wrapY - self.imgBaseHeight)/2;
+					// var a = moveTop +  (self.element.offsetHeight - self.wrapY)/2; //下面不能移了
+
+					
+					self.newY = self.distY;
 				}
+				self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
 			}
 		},
 		// 执行图片移动
@@ -389,8 +450,11 @@
 				result = {};
 	        x1 = e.touches.item(0).pageX;
 	        x2 = e.touches.item(1).pageX;
-	        y1 = e.touches.item(0).pageY;
-	        y2 = e.touches.item(1).pageY;
+	        y1 = e.touches.item(0).pageY - document.body.scrollTop;
+	        y2 = e.touches.item(1).pageY - document.body.scrollTop;
+
+	        console.log(y1);
+	        console.log(y2);
 
 	        if(!x1 || !x2) return;
 
