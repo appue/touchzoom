@@ -174,6 +174,26 @@
 			}
 
 			if(touchTarget>=2){
+				// e.preventDefault();
+				// e.stopPropagation();
+				// var nowFingerDist = self.getTouchDist(e).dist, //获得当前长度
+				// 	ratio = nowFingerDist / self.startFingerDist, //计算缩放比
+				// 	imgWidth  = Math.round(self.mapX * ratio), //计算图片宽度
+				// 	imgHeight = Math.round(self.mapY * ratio); //计算图片高度
+				// // 计算图片新的坐标
+				// self.imgNewX   = Math.round(self.startFingerX * ratio) - self.startFingerX + Math.round((-self.newX) * ratio);
+				// self.imgNewY   = (Math.round(self.startFingerY * ratio) - self.startFingerY)/2 + Math.round((-self.newY) * ratio);
+				// // 开始图片缩放
+				// if(imgWidth >= self.imgBaseWidth){
+				// 	self.element.style.width = imgWidth + "px";
+				// 	self.refresh(-self.imgNewX, -self.imgNewY, "0s", "ease");
+				// 	self.finger = true;
+				// }else{
+				// 	if(imgWidth < self.imgBaseWidth){
+				// 		self.element.style.width = self.imgBaseWidth + "px";
+				// 	}
+				// }
+				// self.finger = true;
 				self._zoom(e);
 			}
 		},
@@ -185,27 +205,21 @@
 			if(!self.finger){
 				if( self.distX>0 ){
 					self.newX = 0;
-					self.resetMove();
+					self.reset();
+					console.log("touchend:"+1);
 				}else if( self.distX<=0 && self.distX>=-self.width ){
 					self.newX = self.distX;
 					self.newY = self.distY;
-					self.resetMove();
+					self.reset();
+					console.log("touchend:"+2);
 				}else if( self.distX<-self.width ){
 					self.newX = -self.width;
-					self.resetMove();
+					self.reset();
+					console.log("touchend:"+3);
 				}
 			}else{
-				if( -self.imgNewX>0 ){
-					self.newX = 0;
-					self.resetScale();
-				}else if( -self.imgNewX<=0 && -self.imgNewX>=-self.width ){
-					self.newX = -self.imgNewX;
-					self.newY = -self.imgNewY;
-					self.resetScale();
-				}else if( -self.imgNewX<-self.width ){
-					self.newX = -self.width;
-					self.resetScale();
-				}
+				self.newX = -self.imgNewX;
+				self.newY = -self.imgNewY;
 			}
 		},
 		// 图片缩放
@@ -240,66 +254,184 @@
 			var self = this;
 
 			if(self.height<0){
-				if(self.element.offsetWidth == self.imgBaseWidth){
-					self.moveY = Math.round(self.distY/self.buff);
+				// moveTop移动到顶部需要移动的距离
+				var moveTop = (self.wrapY - self.imgBaseHeight)/2;
+				// var b = self.wrapY - self.element.offsetHeight - a;
+				if(self.distY < 0){
+					if(self.distY <= -moveTop){
+						self.moveY = Math.round((self.distY+moveTop)/self.buff)-moveTop;
+					}else{
+						// moveBottom移动到底部的临界点
+						// moveBottomDistY移动到底部需要移动的距离
+						var moveBottom = Math.round(self.wrapY/2 - (self.distY + self.mapY - self.imgBaseHeight/2)),
+							moveBottomDistY = Math.round(self.wrapY/2 - self.mapY + self.imgBaseHeight/2);
+						if(moveBottom<=0){
+							self.moveY = Math.round((self.distY-moveBottomDistY)/self.buff) + moveBottomDistY;
+						}else{
+							self.moveY = self.distY;
+						}
+					}
 				}else{
-					var moveTop = Math.round((self.element.offsetHeight-self.imgBaseHeight)/2);
-					self.moveY = -moveTop + Math.round((self.distY + moveTop)/self.buff);
+					var moveBottomDistY = Math.round(self.wrapY/2 + self.imgBaseHeight/2 - self.mapY);
+					if(self.distY >= moveBottomDistY){
+						self.moveY = Math.round((self.distY-moveBottomDistY)/self.buff)+moveBottomDistY;
+					}else{
+						self.moveY = self.distY;
+					}
 				}
 			}else{
-				var a = Math.round((self.wrapY - self.imgBaseHeight)/2);
-				var b = self.element.offsetHeight - self.wrapY + Math.round(self.wrapY - self.imgBaseHeight)/2;
-				if(self.distY >= -a){
-					self.moveY = Math.round((self.distY + a)/self.buff) - a;
-				}else if(self.distY <= -b){
-					self.moveY = Math.round((self.distY + b)/self.buff) - b;
+				// if(self.outDistY<=0){
+				// 	if(self.distY > 0){
+				// 		self.moveY = Math.round(self.distY/self.buff);
+				// 		console.log("movePos: "+3);
+				// 	}else if(self.distY < -self.height){
+				// 		self.moveY = -self.height+Math.round((self.distY+self.height)/self.buff);
+				// 		console.log("movePos: "+4);
+				// 	}else{
+				// 		self.moveY = self.distY;
+				// 		console.log("movePos: "+5);
+				// 	}
+				// }else{
+				// 	if(self.distY>0 && self.distY<=self.outDistY){
+				// 		self.moveY = self.distY;
+				// 		console.log("movePos: "+6);
+				// 	}else if(self.distY > self.outDistY){
+				// 		self.moveY = Math.round((self.distY-self.outDistY)/self.buff)+self.outDistY;
+				// 		console.log("movePos: "+7);
+				// 	}else if(self.distY < -self.outDistY){
+				// 		self.moveY = -self.outDistY+Math.round((self.distY+self.outDistY)/self.buff);
+				// 		console.log("movePos: "+8);
+				// 	}else{
+				// 		self.moveY = self.distY;
+				// 		console.log("movePos: "+9);
+				// 	}
+				// }
+
+				if(self.outDistY > 0){
+					if(self.element.offsetHeight == self.imgBaseHeight){
+						if(self.distY <= -Math.round(self.outDistY)){
+							self.moveY = Math.round((self.distY+self.outDistY)/self.buff) - self.outDistY;
+						}else if(self.distY >= Math.round(self.outDistY)){
+							self.moveY = Math.round((self.distY-self.outDistY)/self.buff) + self.outDistY;
+						}else{
+							self.moveY = self.distY;
+						}
+					}else{
+						self.moveY = self.distY;
+					}
 				}else{
+					// var moveTop = (self.wrapY - self.imgBaseHeight)/2;
+					// var a = moveTop +  (self.element.offsetHeight - self.wrapY)/2; //下面不能移了
+
+					// if(self.distY < 0){
+					// 	// if(self.distY <= -a){
+					// 	// 	self.moveY = Math.round((self.distY + a)/self.buff) - a;
+					// 	// }else{
+					// 	// 	self.moveY = self.distY;
+					// 	// }
+						
+					// }
+
 					self.moveY = self.distY;
 				}
 			}
+
+			// self.element.style.webkitTransform = getTranslate(self.moveX, self.moveY);
 			self.refresh(self.moveX, self.moveY, "0s", "ease");
 		},
 		// 重置数据
-		resetMove: function(){
+		reset: function(){
 			var self = this,
-				hideTime = ".2s";
+				hideTime = ".4s";
+			
 			if(self.height<0){
-				// if(self.element.offsetWidth == self.imgBaseWidth){
-				// 	self.newY = 0;
-				// }else{
-					self.newY = -Math.round(self.element.offsetHeight - self.imgBaseHeight)/2;
-				// }
-			}else{
-				var a = Math.round((self.wrapY - self.imgBaseHeight)/2);
-				var b = self.element.offsetHeight - self.wrapY + Math.round(self.wrapY - self.imgBaseHeight)/2;
-				if(self.distY >= -a){
-					self.newY = -a;
-				}else if(self.distY <= -b){
-					self.newY = -b;
+				// moveTop移动到顶部需要移动的距离
+				var moveTop = (self.wrapY - self.imgBaseHeight)/2;
+				// var b = self.wrapY - self.element.offsetHeight - a;
+				if(self.distY < 0){
+					if(self.distY <= -moveTop){
+						self.newY = -moveTop;
+					}else{
+						// moveBottom移动到底部的临界点
+						// moveBottomDistY移动到底部需要移动的距离
+						var moveBottom = Math.round(self.wrapY/2 - (self.distY + self.mapY - self.imgBaseHeight/2)),
+							moveBottomDistY = Math.round(self.wrapY/2 - self.mapY + self.imgBaseHeight/2);
+						if(moveBottom<=0){
+							self.newY = moveBottomDistY;
+						}else{
+							self.newY = self.distY;
+						}
+					}
 				}else{
+					var moveBottomDistY = Math.round(self.wrapY/2 + self.imgBaseHeight/2 - self.mapY);
+
+					if(self.distY >= moveBottomDistY){
+						self.newY = moveBottomDistY;
+					}else{
+						self.newY = self.distY;
+					}
+				}
+				self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
+			}else{
+				// if(self.outDistY<=0){
+				// 	if( self.distY>0 ){
+				// 		self.newY = 0;
+				// 		self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+3);
+				// 	}else if( self.distY<0 && self.distY>=-self.height ){
+				// 		self.newY = self.distY;
+				// 		// self.refresh(self.newX, self.distY, "0s", "ease");
+				// 		self.refresh(self.newX, self.distY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+4);
+				// 	}else if( self.distY<-self.height ){
+				// 		self.newY = -self.height;
+				// 		self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+5);
+				// 	}
+				// }else{
+				// 	if( self.distY>0 && self.distY<self.outDistY ){
+				// 		self.newY = self.distY;
+				// 		// self.refresh(self.newX, self.distY, "0s", "ease");
+				// 		self.refresh(self.newX, self.distY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+6);
+				// 	}else if( self.distY>=self.outDistY ){
+				// 		self.newY = self.outDistY;
+				// 		self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+7);
+				// 	}else if( self.distY<0 && self.distY>=-self.outDistY ){
+				// 		self.newY = self.distY;
+				// 		// self.refresh(self.newX, self.distY, "0s", "ease");
+				// 		self.refresh(self.newX, self.distY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+8);
+				// 	}else if( self.distY<-self.outDistY ){
+				// 		self.newY = -self.outDistY;
+				// 		self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
+				// 		console.log("reset: "+9);
+				// 	}
+				// }
+
+
+				if(self.outDistY > 0){
+					if(self.element.offsetHeight == self.imgBaseHeight){
+						if(self.distY <= -Math.round(self.outDistY)){
+							self.newY = -self.outDistY;
+						}else if(self.distY >= Math.round(self.outDistY)){
+							self.newY = self.outDistY;
+						}else{
+							self.newY = self.distY;
+						}
+					}else{
+						self.newY = self.distY;
+					}
+				}else{
+					// var moveTop = (self.wrapY - self.imgBaseHeight)/2;
+					// var a = moveTop +  (self.element.offsetHeight - self.wrapY)/2; //下面不能移了
+
+					
 					self.newY = self.distY;
 				}
+				self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
 			}
-			self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
-		},
-		resetScale: function(){
-			var self = this,
-				hideTime = ".2s";
-			if(self.height<0){
-				self.newY = -Math.round(self.element.offsetHeight - self.imgBaseHeight)/2;
-			}else{
-				var a = Math.round((self.wrapY - self.imgBaseHeight)/2);
-				var b = self.element.offsetHeight - self.wrapY + Math.round(self.wrapY - self.imgBaseHeight)/2;
-
-				if(-self.imgNewY >= -a){
-					self.newY = -a;
-				}else if(-self.imgNewY <= -b){
-					self.newY = -b;
-				}else{
-					self.newY = -self.imgNewY;
-				}
-			}
-			self.refresh(self.newX, self.newY, hideTime, "ease-in-out");
 		},
 		// 执行图片移动
 		refresh: function(x, y, timer, type){
@@ -320,6 +452,9 @@
 	        x2 = e.touches.item(1).pageX;
 	        y1 = e.touches.item(0).pageY - document.body.scrollTop;
 	        y2 = e.touches.item(1).pageY - document.body.scrollTop;
+
+	        console.log(y1);
+	        console.log(y2);
 
 	        if(!x1 || !x2) return;
 
