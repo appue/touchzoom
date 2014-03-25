@@ -42,16 +42,15 @@
 			self.buffScale  = 2; //放大系数
 			self.finger = false; //触摸手指的状态 false：单手指 true：多手指
 			
-			self.distX = 0;
-			self.distY = 0;
-			self.newX  = 0;
-			self.newY  = 0;
+			self._destroy();
 
 			zoomClose.addEventListener("click", function(){
 
 				zoomMask.style.cssText = "display:none";
 				zoomImg.src = "";
 				zoomImg.style.cssText = "";
+
+				self._destroy();
 
 				document.removeEventListener("touchmove", self.eventStop, false);
 			}, false);
@@ -90,7 +89,7 @@
 			self.mapX  = params.mapX || 0; 	    //地图宽度
 			self.mapY  = params.mapY || 0;      //地图高度
 
-			self.outDistY = (self.mapY - self.wrapY)/2; //图片超过一瓶的时候有用
+			self.outDistY = (self.mapY - self.wrapY)/2; //图片超过一屏的时候有用
 			
 			self.width  = self.mapX - self.wrapX;   //地图的宽度减去可视区域的宽度
 			self.height = self.mapY - self.wrapY;   //地图的高度减去可视区域的高度
@@ -105,6 +104,14 @@
 				self._touchend(e);
 			},false);
 		},
+		// 重置坐标数据
+		_destroy: function(){
+			this.distX = 0;
+			this.distY = 0;
+			this.newX  = 0;
+			this.newY  = 0;
+		},
+		// 更新地图信息
 		_changeData: function(){
 			this.mapX     = this.element.offsetWidth; 	  //地图宽度
 			this.mapY     = this.element.offsetHeight;      //地图高度
@@ -193,10 +200,12 @@
 			var self = this;
 			e.preventDefault();
 			e.stopPropagation();
+
 			var nowFingerDist = self.getTouchDist(e).dist, //获得当前长度
-				ratio = nowFingerDist / self.startFingerDist, //计算缩放比
-				imgWidth  = Math.round(self.mapX * ratio), //计算图片宽度
-				imgHeight = Math.round(self.mapY * ratio); //计算图片高度
+				ratio 		  = nowFingerDist / self.startFingerDist, //计算缩放比
+				imgWidth  	  = Math.round(self.mapX * ratio), //计算图片宽度
+				imgHeight 	  = Math.round(self.mapY * ratio); //计算图片高度
+
 			// 计算图片新的坐标
 			self.imgNewX = Math.round(self.startFingerX * ratio) - self.startFingerX + Math.round((-self.newX) * ratio);
 			self.imgNewY = (Math.round(self.startFingerY * ratio) - self.startFingerY)/2 + Math.round((-self.newY) * ratio);
@@ -244,8 +253,9 @@
 					self.moveY = -moveTop + Math.round((self.distY + moveTop)/self.buffMove);
 				}
 			}else{
-				var a = Math.round((self.wrapY - self.imgBaseHeight)/2);
-				var b = self.element.offsetHeight - self.wrapY + Math.round(self.wrapY - self.imgBaseHeight)/2;
+				var a = Math.round((self.wrapY - self.imgBaseHeight)/2),
+					b = self.element.offsetHeight - self.wrapY + Math.round(self.wrapY - self.imgBaseHeight)/2;
+
 				if(self.distY >= -a){
 					self.moveY = Math.round((self.distY + a)/self.buffMove) - a;
 				}else if(self.distY <= -b){
@@ -263,8 +273,9 @@
 			if(self.height<0){
 				self.newY = -Math.round(self.element.offsetHeight - self.imgBaseHeight)/2;
 			}else{
-				var a = Math.round((self.wrapY - self.imgBaseHeight)/2);
-				var b = self.element.offsetHeight - self.wrapY + Math.round(self.wrapY - self.imgBaseHeight)/2;
+				var a = Math.round((self.wrapY - self.imgBaseHeight)/2),
+					b = self.element.offsetHeight - self.wrapY + Math.round(self.wrapY - self.imgBaseHeight)/2;
+
 				if(self.distY >= -a){
 					self.newY = -a;
 				}else if(self.distY <= -b){
