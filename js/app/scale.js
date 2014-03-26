@@ -334,10 +334,3 @@
 
 	window.ImagesZoom = new ImagesZoom();
 })(this);
-
-document.addEventListener("DOMContentLoaded", function(event){
-	ImagesZoom.init({
-		"elem": ".list"
-	});
-}, false);
-

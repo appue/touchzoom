@@ -16,14 +16,19 @@
     		<li><img src="themes/images/3.jpg" /></li>
     		<li><img src="themes/images/4.jpg" /></li>
     		<li><img src="themes/images/5.jpg" /></li>
-            <li><img src="themes/images/6.jpg" /></li>
-            <li><img src="themes/images/7.jpg" /></li>
     	</ul>
 
     	<section class="imgzoom_pack">
     		<div class="imgzoom_x">X</div>
     		<div class="imgzoom_img"><img src="" /></div>
     	</section>
-        <script src="js/app/scale.js?v=3"></script>
+        <script src="js/app/scale.js"></script>
+		<script>
+			document.addEventListener("DOMContentLoaded", function(event){
+				ImagesZoom.init({
+					"elem": ".list"
+				});
+			}, false);
+		</script>
     </body>
 </html>
