@@ -207,8 +207,8 @@
 				imgHeight 	  = Math.round(self.mapY * ratio); //计算图片高度
 
 			// 计算图片新的坐标
-			self.imgNewX = Math.round(self.startFingerX * ratio) - self.startFingerX + Math.round((-self.newX) * ratio);
-			self.imgNewY = (Math.round(self.startFingerY * ratio) - self.startFingerY)/2 + Math.round((-self.newY) * ratio);
+			self.imgNewX = Math.round(self.startFingerX * ratio - self.startFingerX + (-self.newX) * ratio);
+			self.imgNewY = Math.roundi((self.startFingerY * ratio - self.startFingerY)/2 + (-self.newY) * ratio);
 
 			if(imgWidth==self.imgBaseWidth*self.buffScale){
 				var twoX = self.imgNewX,
@@ -292,9 +292,6 @@
 			self.element.style.webkitTransitionProperty = "-webkit-transform";
 		    self.element.style.webkitTransitionDuration = timer;
 			self.element.style.webkitTransitionTimingFunction = type;
-		    // self.element.addEventListener("webkitTransitionEnd", function(event){
-		    // 	self.element.style.webkitTransition = "none";
-		    // }, false );
 		    self.element.style.webkitTransform = getTranslate(x, y);
 		},
 		// 获取多点触控
