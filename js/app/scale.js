@@ -208,7 +208,7 @@
 
 			// 计算图片新的坐标
 			self.imgNewX = Math.round(self.startFingerX * ratio - self.startFingerX + (-self.newX) * ratio);
-			self.imgNewY = Math.roundi((self.startFingerY * ratio - self.startFingerY)/2 + (-self.newY) * ratio);
+			self.imgNewY = Math.round((self.startFingerY * ratio - self.startFingerY)/2 + (-self.newY) * ratio);
 
 			if(imgWidth==self.imgBaseWidth*self.buffScale){
 				var twoX = self.imgNewX,
