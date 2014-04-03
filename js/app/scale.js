@@ -120,10 +120,11 @@
 			this.height   = this.mapY - this.wrapY;   //地图的高度减去可视区域的高度
 		},
 		_touchstart: function(e){
-			var self = this,
-				touchTarget = e.targetTouches.length; //获得触控点数
+			var self = this;
 
 			e.preventDefault();
+
+			var touchTarget = e.targetTouches.length; //获得触控点数
 
 			self._changeData(); //重新初始化图片、可视区域数据，由于放大会产生新的计算
 
@@ -142,8 +143,12 @@
 			}
 		},
 		_touchmove: function(e){
-			var self = this,
-				touchTarget = e.targetTouches.length; //获得触控点数
+			var self = this;
+
+			e.preventDefault();
+			e.stopPropagation();
+			
+			var touchTarget = e.targetTouches.length; //获得触控点数
 
 			if(touchTarget == 1 && !self.finger){
 				self._move(e);
@@ -178,8 +183,8 @@
 				pageY = getPage(e, "pageY");
 
 			// 禁止默认事件
-			e.preventDefault();
-			e.stopPropagation();
+			// e.preventDefault();
+			// e.stopPropagation();
 
 			// 获得移动距离
 			self.distX = (pageX - self.basePageX) + self.newX;
@@ -198,8 +203,8 @@
 		// 图片缩放
 		_zoom: function(e){
 			var self = this;
-			e.preventDefault();
-			e.stopPropagation();
+			// e.preventDefault();
+			// e.stopPropagation();
 
 			var nowFingerDist = self.getTouchDist(e).dist, //获得当前长度
 				ratio 		  = nowFingerDist / self.startFingerDist, //计算缩放比
