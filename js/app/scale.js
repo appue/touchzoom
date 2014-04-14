@@ -286,29 +286,30 @@
 		getTouchDist: function(e){
 			var x1 = y1 = x2 = y2 = x3 = y3 = 0,
 				result = {};
-	        x1 = e.touches[0].pageX;
-	        x2 = e.touches[1].pageX;
-	        y1 = e.touches[0].pageY - document.body.scrollTop;
-	        y2 = e.touches[1].pageY - document.body.scrollTop;
+			
+			x1 = e.touches[0].pageX;
+			x2 = e.touches[1].pageX;
+			y1 = e.touches[0].pageY - document.body.scrollTop;
+			y2 = e.touches[1].pageY - document.body.scrollTop;
 
-	        if(!x1 || !x2) return;
+			if(!x1 || !x2) return;
 
-	        if(x1<=x2){
-	        	x3 = (x2-x1)/2+x1;
-	        }else{
-	        	x3 = (x1-x2)/2+x2;
-	        }
-	        if(y1<=y2){
-	        	y3 = (y2-y1)/2+y1;
-	        }else{
-	        	y3 = (y1-y2)/2+y2;
-	        }
+			if(x1<=x2){
+				x3 = (x2-x1)/2+x1;
+			}else{
+				x3 = (x1-x2)/2+x2;
+			}
+			if(y1<=y2){
+				y3 = (y2-y1)/2+y1;
+			}else{
+				y3 = (y1-y2)/2+y2;
+			}
 
-	        result = {
-	        	dist: Math.round(Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2))),
-	        	x: Math.round(x3),
-	        	y: Math.round(y3)
-	        };
+			result = {
+				dist: Math.round(Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2))),
+				x: Math.round(x3),
+				y: Math.round(y3)
+			};
 			return result;
 		},
 		eventStop: function(e){
