@@ -214,8 +214,8 @@
 				imgHeight 	  = Math.round(self.mapY * ratio); //计算图片高度
 
 			// 计算图片新的坐标
-			self.imgNewX = Math.round(self.startFingerX * ratio - self.startFingerX + (-self.newX) * ratio);
-			self.imgNewY = Math.round((self.startFingerY * ratio - self.startFingerY)/2 + (-self.newY) * ratio);
+			self.imgNewX = Math.round(self.startFingerX * ratio - self.startFingerX - self.newX * ratio);
+			self.imgNewY = Math.round((self.startFingerY * ratio - self.startFingerY)/2 - self.newY * ratio);
 
 			if(imgWidth >= self.imgBaseWidth){
 				self.element.style.width = imgWidth + "px";
@@ -286,7 +286,7 @@
 		getTouchDist: function(e){
 			var x1 = y1 = x2 = y2 = x3 = y3 = 0,
 				result = {};
-			
+
 			x1 = e.touches[0].pageX;
 			x2 = e.touches[1].pageX;
 			y1 = e.touches[0].pageY - document.body.scrollTop;
