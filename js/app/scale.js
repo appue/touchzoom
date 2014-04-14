@@ -278,9 +278,9 @@
 		refresh: function(x, y, timer, type){
 			var self = this;
 			self.element.style.webkitTransitionProperty = "-webkit-transform";
-		    self.element.style.webkitTransitionDuration = timer;
+			self.element.style.webkitTransitionDuration = timer;
 			self.element.style.webkitTransitionTimingFunction = type;
-		    self.element.style.webkitTransform = getTranslate(x, y);
+			self.element.style.webkitTransform = getTranslate(x, y);
 		},
 		// 获取多点触控
 		getTouchDist: function(e){
