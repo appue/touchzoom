@@ -3,10 +3,7 @@
 		support = {
 			transform3d: ("WebKitCSSMatrix" in window && "m11" in new WebKitCSSMatrix()),
 			touch: ("ontouchstart" in window)
-		},
-		touchstartEvent =  support.touch ? "touchstart" : "mousedown",
-		touchmoveEvent  =  support.touch ? "touchmove" : "mousemove",
-		touchendEvent   =  support.touch ? "touchend" : "mouseup";
+		};
 
 		
 	function getTranslate(x, y){
@@ -220,25 +217,6 @@
 			self.imgNewX = Math.round(self.startFingerX * ratio - self.startFingerX + (-self.newX) * ratio);
 			self.imgNewY = Math.round((self.startFingerY * ratio - self.startFingerY)/2 + (-self.newY) * ratio);
 
-			if(imgWidth==self.imgBaseWidth*self.buffScale){
-				var twoX = self.imgNewX,
-					twoY = self.imgNewY;
-			}
-			// 开始图片缩放
-			// if((imgWidth >= self.imgBaseWidth) && (imgWidth <= self.imgBaseWidth*self.buffScale)){
-			// 	self.element.style.width = imgWidth + "px";
-			// 	self.refresh(-self.imgNewX, -self.imgNewY, "0s", "ease");
-			// 	self.finger = true;
-			// }else if(imgWidth>self.imgBaseWidth*self.buffScale){
-			// 	var a = self.imgBaseWidth*self.buffScale + Math.round((imgWidth-self.imgBaseWidth*self.buffScale)/self.buffMove);
-			// 	self.element.style.width = a + "px";
-			// 	self.refresh(-self.imgNewX, -self.imgNewY, "0s", "ease");
-			// 	self.finger = true;
-			// }else{
-			// 	if(imgWidth < self.imgBaseWidth){
-			// 		self.element.style.width = self.imgBaseWidth + "px";
-			// 	}
-			// }
 			if(imgWidth >= self.imgBaseWidth){
 				self.element.style.width = imgWidth + "px";
 				self.refresh(-self.imgNewX, -self.imgNewY, "0s", "ease");
