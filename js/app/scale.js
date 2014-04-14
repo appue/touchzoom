@@ -141,12 +141,17 @@
 		        self.startFingerX    = self.getTouchDist(e).x;
 		        self.startFingerY    = self.getTouchDist(e).y;
 			}
+
+			console.log("pageX: "+getPage(e, "pageX"));
+			console.log("pageY: "+getPage(e, "pageY"));
 		},
 		_touchmove: function(e){
 			var self = this;
 
 			e.preventDefault();
 			e.stopPropagation();
+
+			console.log("event.changedTouches[0].pageY: "+event.changedTouches[0].pageY);
 			
 			var touchTarget = e.targetTouches.length; //获得触控点数
 
@@ -303,10 +308,10 @@
 		getTouchDist: function(e){
 			var x1 = y1 = x2 = y2 = x3 = y3 = 0,
 				result = {};
-	        x1 = e.touches.item(0).pageX;
-	        x2 = e.touches.item(1).pageX;
-	        y1 = e.touches.item(0).pageY - document.body.scrollTop;
-	        y2 = e.touches.item(1).pageY - document.body.scrollTop;
+	        x1 = e.touches[0].pageX;
+	        x2 = e.touches[1].pageX;
+	        y1 = e.touches[0].pageY - document.body.scrollTop;
+	        y2 = e.touches[1].pageY - document.body.scrollTop;
 
 	        if(!x1 || !x2) return;
 
