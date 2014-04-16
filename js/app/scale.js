@@ -134,9 +134,9 @@
 			}else{
 				self.finger = true;
 
-		        self.startFingerDist = self.getTouchDist(e).dist;
-		        self.startFingerX    = self.getTouchDist(e).x;
-		        self.startFingerY    = self.getTouchDist(e).y;
+				self.startFingerDist = self.getTouchDist(e).dist;
+				self.startFingerX    = self.getTouchDist(e).x;
+				self.startFingerY    = self.getTouchDist(e).y;
 			}
 
 			console.log("pageX: "+getPage(e, "pageX"));
