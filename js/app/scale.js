@@ -4,30 +4,23 @@
 			transform3d: ("WebKitCSSMatrix" in window && "m11" in new WebKitCSSMatrix()),
 			touch: ("ontouchstart" in window)
 		};
-
 		
 	function getTranslate(x, y){
 		var distX = x, distY = y;
-		return support.transform3d
-			? "translate3d("+ distX +"px, "+ distY +"px, 0)"
-			: "translate("+ distX +"px, "+ distY +"px)";
+		return support.transform3d ? "translate3d("+ distX +"px, "+ distY +"px, 0)" : "translate("+ distX +"px, "+ distY +"px)";
 	}
 
 	function getPage(event, page) {
 		return support.touch ? event.changedTouches[0][page] : event[page];
 	}
 
-	var ImagesZoom = function(params){
-		return (this instanceof ImagesZoom)
-			? this.init(params)
-			: new ImagesZoom(params);
-	};
+	var ImagesZoom = function(){};
 
 	ImagesZoom.prototype = {
 		// 给初始化数据
-		init: function(params){
+		init: function(param){
 			var self   = this,
-				params = params || {};
+				params = param || {};
 				
 			var imgList   = document.querySelectorAll(params.elem + " img"),
 				zoomMask  = document.querySelector(".imgzoom_pack"),
@@ -74,9 +67,9 @@
 				}, false);
 			}
 		},
-		addEventStart: function(params){
+		addEventStart: function(param){
 			var self   = this,
-				params = params || {};
+				params = param || {};
 
 			self.element = document.querySelector(".imgzoom_pack img");
 
@@ -276,15 +269,19 @@
 		},
 		// 执行图片移动
 		refresh: function(x, y, timer, type){
-			var self = this;
-			self.element.style.webkitTransitionProperty = "-webkit-transform";
-			self.element.style.webkitTransitionDuration = timer;
-			self.element.style.webkitTransitionTimingFunction = type;
-			self.element.style.webkitTransform = getTranslate(x, y);
+			this.element.style.webkitTransitionProperty = "-webkit-transform";
+			this.element.style.webkitTransitionDuration = timer;
+			this.element.style.webkitTransitionTimingFunction = type;
+			this.element.style.webkitTransform = getTranslate(x, y);
 		},
 		// 获取多点触控
 		getTouchDist: function(e){
-			var x1 = y1 = x2 = y2 = x3 = y3 = 0,
+			var x1 = 0,
+				y1 = 0,
+				x2 = 0,
+				y2 = 0,
+				x3 = 0,
+				y3 = 0,
 				result = {};
 
 			x1 = e.touches[0].pageX;
