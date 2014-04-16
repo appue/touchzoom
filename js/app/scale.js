@@ -35,7 +35,6 @@
 			self._destroy();
 
 			zoomClose.addEventListener("click", function(){
-
 				zoomMask.style.cssText = "display:none";
 				zoomImg.src = "";
 				zoomImg.style.cssText = "";
