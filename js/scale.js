@@ -49,20 +49,23 @@
 					imgSrc = this.getAttribute("src");
 					zoomMask.style.cssText = "display:block";
 					zoomImg.src = imgSrc;
-					zoomImg.style.cssText = "margin-top:-"+(zoomImg.offsetHeight/2)+"px";
 
-					// 禁止页面滚动
-					document.addEventListener("touchmove", self.eventStop, false);
-					
-					self.imgBaseWidth  = zoomImg.offsetWidth;
-					self.imgBaseHeight = zoomImg.offsetHeight;
+					zoomImg.onload = function(){
+						zoomImg.style.cssText = "margin-top:-"+(zoomImg.offsetHeight/2)+"px";
 
-					self.addEventStart({
-						wrapX: zoomMask.offsetWidth,
-						wrapY: zoomMask.offsetHeight,
-						mapX: zoomImg.width,
-						mapY: zoomImg.height
-					});
+						// 禁止页面滚动
+						document.addEventListener("touchmove", self.eventStop, false);
+						
+						self.imgBaseWidth  = zoomImg.offsetWidth;
+						self.imgBaseHeight = zoomImg.offsetHeight;
+
+						self.addEventStart({
+							wrapX: zoomMask.offsetWidth,
+							wrapY: zoomMask.offsetHeight,
+							mapX: zoomImg.width,
+							mapY: zoomImg.height
+						});
+					}
 				}, false);
 			}
 		},
