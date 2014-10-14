@@ -563,12 +563,17 @@ var ImagesZoom = {
     appendImage: function() {
     	var self = this;
 
+		var $that = self.$wrap.find("li").eq(self.current),
+			content = $that.html();
+ 
+		if (!content) {
+			$that.html('<div class="this_loading"></div>');
+		}
+
         var image = new Image();
 
         image.onload = function () {
 
-    		var $that = self.$wrap.find("li").eq(self.current);
-    		
             var str = "";
 
             if (self.detail) {
@@ -582,10 +587,8 @@ var ImagesZoom = {
 
             }
 
-            if (!$that.html()) {
-
+            if (!content || (content.search(/img/) == -1)) {
                 $that.html(str);
-
             }
 
         };

@@ -94,7 +94,6 @@ img{
 	display: inline-block;
 	content: "";
 	width: 0;
-	background: red;
 	height: 100%;
 
 	vertical-align: middle;
@@ -131,4 +130,26 @@ img{
 .appue_scale li .this_text article{
 	color: #666;
 	padding-top: 5px;
+}
+.appue_scale li .this_loading{
+	width: 30px;
+	height: 30px;
+	background: url(images/loading.png) no-repeat center center;
+	background-size: 100%;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -15px;
+	margin-top: -15px;
+
+	-webkit-animation: loadimg 1.3s linear infinite;
+	-webkit-transform-origin: 50% 50%;
+}
+@-webkit-keyframes loadimg {
+	0% {
+		-webkit-transform: rotate(0deg);
+	}
+	100% {
+		-webkit-transform: rotate(360deg);
+	}
 }
