@@ -1,0 +1,134 @@
+﻿/**rest**/
+*{
+	padding: 0;
+	margin: 0;
+}
+body{
+	font-family:Arial;
+	width:100%;
+
+	-webkit-user-select:none;
+	-webkit-touch-callout:none;
+	-webkit-tap-highlight-color:rgba(0,0,0,0);
+	-webkit-text-size-adjust:none;
+}
+ul,li{
+	list-style: none;
+}
+img{
+	border: 0;
+}
+
+.list{
+	width: 100%;
+	padding: 10px 0;
+}
+.list li{
+	display: block;
+	margin-bottom: 10px;
+}
+.list li img{
+	width:100%;
+	height:auto;
+}
+
+
+.appue_scale{
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 2;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,1);
+
+	display: none;
+}
+.appue_scale .this_return{
+	width: 60px;
+	height: 60px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 3;
+	/*background: red;*/
+}
+.appue_scale .this_return:before,
+.appue_scale .this_return:after{
+	display: block;
+	content: "";
+	width: 20px;
+	height: 2px;
+	background: #fff;
+	position: absolute;
+	left: 15px;
+}
+.appue_scale .this_return:before{
+	top: 20px;
+	-webkit-transform: rotate(-45deg);
+}
+.appue_scale .this_return:after{
+	top: 33px;
+	-webkit-transform: rotate(45deg);
+}
+.appue_scale .this_img{
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+
+	font-size: 0;
+	padding: 0;
+
+	display: -webkit-box;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
+}
+.appue_scale li{
+	display: block;
+	text-align: center;
+
+	position: relative;
+}
+.appue_scale li:before{
+	display: inline-block;
+	content: "";
+	width: 0;
+	background: red;
+	height: 100%;
+
+	vertical-align: middle;
+}
+.appue_scale li img{
+	max-width: 100%;
+	max-height: 100%;
+	vertical-align: middle;
+}
+.appue_scale li .this_text{
+	width: 100%;
+	padding: 10px;
+	color: #fff;
+	font-size: 14px;
+	text-align: left;
+	line-height: 20px;
+
+	position: absolute;
+	z-index: 4;
+	left: 0;
+	bottom: 0;
+
+	pointer-events: none;
+	-webkit-box-sizing: border-box;
+	text-shadow: 1px 1px 1px rgba(0,0,0,.3);
+}
+.appue_scale li .this_text div{
+	overflow : hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+.appue_scale li .this_text article{
+	color: #666;
+	padding-top: 5px;
+}

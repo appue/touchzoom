@@ -7,28 +7,48 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="themes/images/icon.png" />
         <title>图片缩放</title>
-        <link rel="stylesheet" href="themes/scale.css" type="text/css" />
+        <link rel="stylesheet" href="scale.css" type="text/css" />
+        <script type="text/javascript" src="js/jquery.js"></script>
     </head>
     <body>
     	<ul class="list">
-            <li><img src="themes/images/1.jpg" /></li>
+            <li><img src="themes/images/icon.jpg" /></li>
             <li><img src="themes/images/2.jpg" /></li>
-    		<li><img src="themes/images/3.jpg" /></li>
-    		<li><img src="themes/images/4.jpg" /></li>
-    		<li><img src="themes/images/5.jpg" /></li>
+            <li><img src="themes/images/3.jpg" /></li>
+            <li><img src="themes/images/4.jpg" /></li>
+            <li><img src="themes/images/5.jpg" /></li>
     	</ul>
 
-    	<section class="imgzoom_pack">
-    		<div class="imgzoom_x">X</div>
-    		<div class="imgzoom_img"><img src="" /></div>
-    	</section>
-        <script src="js/app/scale.js"></script>
-		<script>
-			document.addEventListener("DOMContentLoaded", function(event){
-				ImagesZoom.init({
-					"elem": ".list"
-				});
-			}, false);
-		</script>
+    	<div class="appue_scale">
+    		<div class="this_return"></div>
+            <ul class="this_img">
+            </ul>
+    	</div>
+
+        <script type="text/javascript" src="js/scale.js?v=3"></script>
+        <script type="text/javascript">
+            var $list = $('.list li');
+            $list.on("click", function(){
+
+                var z = $(this).index();
+                var img = [],
+                    detail = [];
+
+                for(var i=0, len = $list.length; i<len; i++){
+                    img.push($('.list img').eq(i).attr("src"));
+                }
+
+                for(var i=0, len = $list.length; i<len; i++){
+                    detail.push("<div>transform可以对元素进行角度旋转和缩放,请使用webkit内核最新版浏览器浏览该文章以保证CSS3效果能够完全呈现请使用webkit内核最新版浏览器浏览该文章以保证CSS3请使用webkit内核最新版浏览器浏览该文章以保证CSS3效果能够完全呈现请使用webkit内核最新版浏览器浏览该文章以保证CSS3请使用webkit内核最新版浏览器浏览该文章以保证CSS3效果能够完全呈现请使用webkit内核最新版浏览器浏览该文章以保证CSS3</div><article>猴子 3小时前</article>");
+                }
+
+                ImagesZoom.init({
+                    "imgsUrl": img,
+                    "detail": detail,
+                    "currentImg": z,
+                    "isScale": false
+                });
+            });
+        </script>
     </body>
 </html>
