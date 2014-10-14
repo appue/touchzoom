@@ -234,6 +234,9 @@ var ImagesZoom = {
 	
 	_move: function(e) {
 		var self = this;
+		
+		var imgBaseWidth = self.imagesWH[self.current].w,
+			imgBaseHeight = self.imagesWH[self.current].h;
 
 		var pageX = self.getPage(e, "pageX"), //获取移动坐标
 			pageY = self.getPage(e, "pageY");
@@ -247,7 +250,7 @@ var ImagesZoom = {
 		self.distY = (pageY - self.basePageY) + self.newY;
 
 		var currentImgWidth = self.getTarget(e).width(),
-			endX = currentImgWidth - self.bodyWidth;
+			endX = currentImgWidth - imgBaseWidth;
 
 		if (self.distX >= 0) {
 
@@ -255,7 +258,7 @@ var ImagesZoom = {
 
 		} else {
 
-			if (currentImgWidth == self.bodyWidth) {
+			if (currentImgWidth == imgBaseWidth) {
 
 				self.moveX = Math.round( self.distX / self.buffMove );
 
@@ -291,6 +294,9 @@ var ImagesZoom = {
 
 		var currentWidth = "";
 
+		var imgBaseWidth = self.imagesWH[self.current].w,
+			imgBaseHeight = self.imagesWH[self.current].h;
+
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -301,15 +307,15 @@ var ImagesZoom = {
 
 		var $target = self.getTarget(e);
 
-		if (imgWidth <= self.imgBaseWidth*self.buffScale) {
+		if (imgWidth <= imgBaseWidth*self.buffScale) {
 
-			if (imgWidth >= self.imgBaseWidth && imgHeight <= self.bodyHeight) {
+			if (imgWidth >= imgBaseWidth && imgHeight <= self.bodyHeight) {
 
 				self.imgNewX = Math.round(self.startFingerX * ratio - self.startFingerX + (-self.newX) * ratio);
 				self.imgNewY = 0;
 				currentWidth = imgWidth;
 
-			} else if (imgHeight > self.imgBaseHeight) {
+			} else if (imgHeight > imgBaseHeight) {
 
 				// // 计算图片新的坐标
 				// self.imgNewX = Math.round(self.startFingerX * ratio - self.startFingerX + (-self.newX) * ratio);
@@ -319,12 +325,12 @@ var ImagesZoom = {
 				self.imgNewY = Math.round( (imgHeight - self.bodyHeight) / 2 );
 				currentWidth = imgWidth;
 
-			} else if (imgWidth < self.imgBaseWidth) {
+			} else if (imgWidth < imgBaseWidth) {
 
 				self.imgNewX = Math.round(self.startFingerX * ratio - self.startFingerX + (-self.newX) * ratio);
 				self.imgNewY = Math.round( (imgHeight - self.bodyHeight) / 2 );
 
-				currentWidth = self.imgBaseWidth;
+				currentWidth = imgBaseWidth;
 
 			}
 		
@@ -349,8 +355,11 @@ var ImagesZoom = {
 	resetMove: function(e) {
 		var self = this;
 
+		var imgBaseWidth = self.imagesWH[self.current].w,
+			imgBaseHeight = self.imagesWH[self.current].h;
+
 		var currentImgWidth = self.getTarget(e).width(),
-			endX = currentImgWidth - self.bodyWidth;
+			endX = currentImgWidth - imgBaseWidth;
 
 		if (!self.distX) {
 			self.distX = 0;
@@ -471,8 +480,11 @@ var ImagesZoom = {
 	resetZoom: function(e) {
 		var self = this;
 
+		var imgBaseWidth = self.imagesWH[self.current].w,
+			imgBaseHeight = self.imagesWH[self.current].h;
+
 		var currentImgWidth = self.getTarget(e).width(),
-			endX = currentImgWidth - self.bodyWidth;
+			endX = currentImgWidth - imgBaseWidth;
 
 		self.distX = -self.imgNewX;
 		self.distY = -self.imgNewY;
