@@ -12,11 +12,11 @@
     </head>
     <body>
     	<ul class="list">
-            <li><img src="themes/images/icon.jpg" /></li>
-            <li><img src="themes/images/2.jpg" /></li>
-            <li><img src="themes/images/3.jpg" /></li>
-            <li><img src="themes/images/4.jpg" /></li>
-            <li><img src="themes/images/5.jpg" /></li>
+            <li><img src="images/icon.jpg" /></li>
+            <li><img src="images/21.jpg" /></li>
+            <li><img src="images/3.jpg" /></li>
+            <li><img src="images/4.jpg" /></li>
+            <li><img src="images/5.jpg" /></li>
     	</ul>
 
     	<div class="appue_scale">
@@ -27,6 +27,14 @@
 
         <script type="text/javascript" src="js/scale.js?v=3"></script>
         <script type="text/javascript">
+            $(".this_return").on("click", function(){
+
+                $(".appue_scale").css({
+                    "display": "none"
+                })
+                $(".appue_scale ul").html("");
+            });
+
             var $list = $('.list li');
             $list.on("click", function(){
 
