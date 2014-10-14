@@ -1,8 +1,3 @@
-/*
-* enuobear@gmail.com
-* https://github.com/appue/touchzoom
-*/
-
 var document = window.document,
 	support = {
 		transform3d: ("WebKitCSSMatrix" in window && "m11" in new WebKitCSSMatrix()),
@@ -157,6 +152,10 @@ var ImagesZoom = {
 	_touchstart: function(e) {
 		var self = this;
 
+        if (e.target.nodeName !== 'IMG') {
+            return;
+        }
+
 		e.preventDefault();
 
 		self.setImagesInfo(e); // 存取图片信息
@@ -192,6 +191,10 @@ var ImagesZoom = {
 	_touchmove: function(e) {
 		var self = this;
 
+        if (e.target.nodeName !== 'IMG') {
+            return;
+        }
+
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -220,6 +223,11 @@ var ImagesZoom = {
 	_touchend: function(e) {
 		var self = this;
 
+
+        if (e.target.nodeName !== 'IMG') {
+            return;
+        }
+        
 		if (self.finger) {
 
 			self.resetZoom(e);
