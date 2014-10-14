@@ -53,7 +53,7 @@ var ImagesZoom = {
 				detail: "",
 				buffMove: 3,
 				currentImg: 0,
-				isScale: true,
+				isScale: false,
 				maxScale: 2,
 				minDist: 120
 			};
@@ -234,7 +234,7 @@ var ImagesZoom = {
 	
 	_move: function(e) {
 		var self = this;
-		
+
 		var imgBaseWidth = self.imagesWH[self.current].w,
 			imgBaseHeight = self.imagesWH[self.current].h;
 
