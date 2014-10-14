@@ -563,26 +563,34 @@ var ImagesZoom = {
     appendImage: function() {
     	var self = this;
 
-    	var $that = self.$wrap.find("li").eq(self.current);
+        var image = new Image();
 
-    	var str = "";
+        image.onload = function () {
 
-    	if (self.detail) {
+    		var $that = self.$wrap.find("li").eq(self.current);
+    		
+            var str = "";
 
-    		str = '<img src="'+ self.imgs[self.current] +'" />' +
-				'<div class="this_text">' + self.detail[self.current] + '</div>';
+            if (self.detail) {
 
-    	} else {
+                str = '<img src="' + self.imgs[self.current] + '" />' +
+			          '<div class="this_text">' + self.detail[self.current] + '</div>';
 
-    		str = '<img src="'+ self.imgs[self.current] +'" />';
+            } else {
 
-    	}
+                str = '<img src="' + self.imgs[self.current] + '" />';
 
-    	if (!$that.html()) {
+            }
 
-    		$that.html(str);
+            if (!$that.html()) {
 
-    	}
+                $that.html(str);
+
+            }
+
+        };
+
+        image.src = self.imgs[self.current];
     },
     
     /*
